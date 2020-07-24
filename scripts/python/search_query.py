@@ -37,9 +37,8 @@ with driver.session(database="neo4j") as session:
         MATCH (query:SearchTerm)-[:WAS_USED_IN]->(:SessionEntry)
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
-        LIMIT 10
+        LIMIT 5000
         RETURN query.searchTerm as queryText, query.embeddingNode2vecT1 as embedding, 'product' as productName 
-        Limit 5000
     """
 
     result = session.run(query)
