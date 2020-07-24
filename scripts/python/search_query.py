@@ -38,7 +38,7 @@ with driver.session(database="neo4j") as session:
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
         LIMIT 5000
-        RETURN query.searchTerm as queryText, query.embeddingNode2vecT1 as embedding, 'product' as productName 
+        RETURN query.searchTerm as queryText, query.embeddingNode2vecT2 as embedding, 'product' as productName 
     """
 
     result = session.run(query)
@@ -62,7 +62,7 @@ chart = alt.Chart(df).mark_circle(size=60).encode(
     tooltip=['query', 'product']
 ).properties(width=700, height=400)
 
-chart.save("test1.html")
+chart.save("test2.html")
 #altair_viewer.show(chart)
 
 #print("Just wait")
