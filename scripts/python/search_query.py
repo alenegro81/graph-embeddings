@@ -38,7 +38,7 @@ with driver.session(database="neo4j") as session:
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
         LIMIT 10
-        RETURN query.searchTerm, query.embeddingNode2vecT1 as embedding 
+        RETURN query.searchTerm as queryText, query.embeddingNode2vecT1 as embedding 
         Limit 5000
     """
 
