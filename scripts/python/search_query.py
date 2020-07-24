@@ -38,7 +38,7 @@ with driver.session(database="neo4j") as session:
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
         LIMIT 10
-        RETURN query.searchTerm as queryText, query.embeddingNode2vecT1 as embedding, 'product' as product 
+        RETURN query.searchTerm as queryText, query.embeddingNode2vecT1 as embedding, 'product' as productName 
         Limit 5000
     """
 
@@ -51,7 +51,7 @@ X_embedded = TSNE(n_components=2, random_state=6).fit_transform(list(X.embedding
 queries = X.queryText
 df = pd.DataFrame(data = {
     "query": queries,
-    "product": X.product,
+    "product": X.productName,
     "x": [value[0] for value in X_embedded],
     "y": [value[1] for value in X_embedded]
 })
@@ -60,7 +60,7 @@ chart = alt.Chart(df).mark_circle(size=60).encode(
     x='x',
     y='y',
     color='product',
-    tooltip=['query']
+    tooltip=['query', 'product']
 ).properties(width=700, height=400)
 
 chart.save("test1.html")
