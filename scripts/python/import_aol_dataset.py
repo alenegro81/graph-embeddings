@@ -20,7 +20,7 @@ class AOLDatasetImporter(object):
     def close(self):
         self._driver.close()
 
-    def import_event_data(self, file, database):
+    def import_event_data(self, file):
         with self._driver.session(database=self._database_name) as session:
             self.executeNoException(session, "CREATE CONSTRAINT ON (u:User) ASSERT u.userId IS UNIQUE")
             self.executeNoException(session, "CREATE CONSTRAINT ON (i:SearchQuery) ASSERT i.query IS UNIQUE")

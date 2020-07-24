@@ -6,9 +6,9 @@ import altair_viewer
 import pandas as pd
 
 
-driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "pippo1"))
+driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "alessandro"))
 
-with driver.session(database="test-embeddings-2") as session:
+with driver.session(database="neo4j") as session:
     # result = session.run("""
     #     MATCH (query:SearchQuery)<-[:HAS_QUERY]-()
     #     WHERE size(query.query) > 3
@@ -22,17 +22,28 @@ with driver.session(database="test-embeddings-2") as session:
     #     Limit 10000
     # """)
 
-    result = session.run("""
-            MATCH (url:ClickedURL)<-[:HAS_CLICK]-()
-            WITH url, count(*) as occurrencies
-            ORDER BY occurrencies desc
-            LIMIT 20
-            MATCH (url)<-[:HAS_CLICK]-(se:SearchEvent)-[:HAS_QUERY]->(query:SearchQuery)
-            WITH DISTINCT query.query AS query, query.embeddingNode2vecT3 AS embedding, url.url as url, count(se) as searchEvents
-            ORDER by searchEvents desc
-            RETURN url, query as queryText, embedding
-            Limit 1000
-        """)
+    query_old = """
+        MATCH (url:ClickedURL)<-[:HAS_CLICK]-()
+        WITH url, count(*) as occurrencies
+        ORDER BY occurrencies desc
+        LIMIT 30
+        MATCH (url)<-[:HAS_CLICK]-(se:SearchEvent)-[:HAS_QUERY]->(query:SearchQuery)
+        WITH DISTINCT query.query AS query, query.embeddingNode2vecT4 AS embedding, url.url as url, count(se) as searchEvents
+        ORDER by searchEvents desc
+        RETURN url, query as queryText, embedding
+        Limit 5000
+    """
+    query = """
+        MATCH (query:SearchTerm)-[:WAS_USED_IN]->(:SessionEntry)
+        WITH query, count(*) as occurrencies
+        ORDER BY occurrencies desc
+        LIMIT 10
+        RETURN query.searchTerm, query.embeddingNode2vecT1 as embedding 
+        Limit 5000
+    """
+
+    result = session.run(query)
+
     X = pd.DataFrame([dict(record) for record in result])
 
 X_embedded = TSNE(n_components=2, random_state=6).fit_transform(list(X.embedding))
@@ -40,7 +51,7 @@ X_embedded = TSNE(n_components=2, random_state=6).fit_transform(list(X.embedding
 queries = X.queryText
 df = pd.DataFrame(data = {
     "query": queries,
-    "url": X.url,
+    #"url": X.url,
     "x": [value[0] for value in X_embedded],
     "y": [value[1] for value in X_embedded]
 })
@@ -48,10 +59,11 @@ df = pd.DataFrame(data = {
 chart = alt.Chart(df).mark_circle(size=60).encode(
     x='x',
     y='y',
-    color='url',
-    tooltip=['query', 'url']
+    #color='url',
+    tooltip=['query']
 ).properties(width=700, height=400)
 
-altair_viewer.display(chart)
+chart.save("test1.html")
+altair_viewer.show(chart)
 
-print("Just wait")
+#print("Just wait")
