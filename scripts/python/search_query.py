@@ -6,9 +6,9 @@ import altair_viewer
 import pandas as pd
 
 
-driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "alessandro"))
+driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "pippo1"))
 
-with driver.session(database="neo4j") as session:
+with driver.session(database="test-embeddings-2") as session:
     # result = session.run("""
     #     MATCH (query:SearchQuery)<-[:HAS_QUERY]-()
     #     WHERE size(query.query) > 3
@@ -28,7 +28,7 @@ with driver.session(database="neo4j") as session:
         ORDER BY occurrencies desc
         LIMIT 30
         MATCH (url)<-[:HAS_CLICK]-(se:SearchEvent)-[:HAS_QUERY]->(query:SearchQuery)
-        WITH DISTINCT query.query AS query, query.embeddingNode2vecT4 AS embedding, url.url as url, count(se) as searchEvents
+        WITH DISTINCT query.query AS query, query.embeddingGGVecT1 AS embedding, url.url as url, count(se) as searchEvents
         ORDER by searchEvents desc
         RETURN url, query as queryText, embedding
         Limit 5000
@@ -38,10 +38,10 @@ with driver.session(database="neo4j") as session:
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
         LIMIT 1000
-        RETURN query.searchTerm as queryText, query.embeddingNode2vecT3 as embedding, 'product' as productName 
+        RETURN query.searchTerm as queryText, query.embeddingGGVecT1 as embedding, 'product' as productName 
     """
 
-    result = session.run(query)
+    result = session.run(query_old)
 
     X = pd.DataFrame([dict(record) for record in result])
 
@@ -50,7 +50,7 @@ X_embedded = TSNE(n_components=2, random_state=6).fit_transform(list(X.embedding
 queries = X.queryText
 df = pd.DataFrame(data = {
     "query": queries,
-    "product": X.productName,
+    "product": X.url,
     "x": [value[0] for value in X_embedded],
     "y": [value[1] for value in X_embedded]
 })
@@ -62,7 +62,7 @@ chart = alt.Chart(df).mark_circle(size=60).encode(
     tooltip=['query', 'product']
 ).properties(width=700, height=400)
 
-chart.save("test3.html")
-#altair_viewer.show(chart)
+chart.save("test_python_1.html")
+altair_viewer.show(chart)
 
 #print("Just wait")

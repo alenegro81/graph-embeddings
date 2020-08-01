@@ -122,7 +122,6 @@ class AOLDatasetImporter(object):
         """
         while True:
             user_id = self._users_queue.get()
-
             with self._driver.session(database=self._database_name) as session:
                 try:
                     session.run(query, {"userId":user_id})
