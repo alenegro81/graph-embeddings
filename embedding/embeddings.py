@@ -18,7 +18,7 @@ class GraphEmbeddings(object):
 
 
     def compute(self, file):
-        G = cg.read_edgelist(file)
+        G = cg.read_edgelist(f=file, header=0)
         print("File read")
         ggvec_model = nodevectors.GGVec(order=1)
         print("Model Created")
@@ -36,13 +36,8 @@ class GraphEmbeddings(object):
             user_info_thread.daemon = True
             user_info_thread.start()
 
-        name_list = list(names)
-
         for i in range(embeddings.shape[0] - 1):
-            if names[name_list[i]] != i:
-                print(i, "this shouldn't happen")
-                break
-            self._nodes_queue.put((name_list[i], embeddings[i]))
+            self._nodes_queue.put((names[i], embeddings[i]))
             if i % 1000 == 0:
                 print(i, "lines processed")
 
@@ -65,7 +60,7 @@ class GraphEmbeddings(object):
                     print("Queue size:", queue_size)
             with self._driver.session(database=self._database_name) as session:
                 try:
-                    session.run(query, {"nodeId":node_id, "embeddings": embeddings.tolist()})
+                    session.run(query, {"nodeId":int(node_id), "embeddings": embeddings.tolist()})
                 except Exception as e:
                     print(node_id, e)
             self._nodes_queue.task_done()
@@ -77,7 +72,7 @@ if __name__ == '__main__':
     analyzer = GraphEmbeddings(uri=uri, user="neo4j", password="pippo1",
                                database_name="test-embeddings-2",
                                write_property="embeddingGGVecT1")
-    embeddings, names = analyzer.compute("test_crsgraph.txt")
+    embeddings, names = analyzer.compute("test_10000.txt")
     end = time.time() - start
     print("Time to complete:", end)
     start = time.time()
