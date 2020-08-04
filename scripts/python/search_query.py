@@ -50,7 +50,7 @@ with driver.session(database="neo4j") as session:
         RETURN item.oms_sku as productId, item.embeddingNode2vecT2 as embedding, category.name as categoryName
     """
 
-    result = session.run(query_old)
+    result = session.run(query)
 
     X = pd.DataFrame([dict(record) for record in result])
 
