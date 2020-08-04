@@ -6,9 +6,9 @@ import altair_viewer
 import pandas as pd
 
 
-driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "pippo1"))
+driver = GraphDatabase.driver("bolt://localhost", auth=("neo4j", "alessandro"))
 
-with driver.session(database="test-embeddings-2") as session:
+with driver.session(database="neo4j") as session:
     # result = session.run("""
     #     MATCH (query:SearchQuery)<-[:HAS_QUERY]-()
     #     WHERE size(query.query) > 3
