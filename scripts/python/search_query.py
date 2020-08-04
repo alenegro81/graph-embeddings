@@ -42,11 +42,14 @@ with driver.session(database="neo4j") as session:
     """
 
     query = """
-        MATCH (item:TargetItem_t3)-[r:UNWEIGHTED_CLICKED_AFTER_SEARCH_2|ADDED_TO_CART_AFTER_SEARCH|PURCHASED_AFTER_SEARCH]->(s:TargetSearchTerm_t3)
-        WITH item, sum(r.numberOfTimes) as occurrencies
+        MATCH (item:TargetItem_t3)-[:BELONGS_TO_CATEGORY]->(category:Category)
+        WITH category, count(*) as itemOccurrences
+        ORDER BY itemOccurrences desc
+        LIMIT 25
+        MATCH (category)<-[:BELONGS_TO_CATEGORY]-(item:TargetItem_t3)-[r:UNWEIGHTED_CLICKED_AFTER_SEARCH_2|ADDED_TO_CART_AFTER_SEARCH|PURCHASED_AFTER_SEARCH]->(s:TargetSearchTerm_t3)
+        WITH item, category, sum(r.numberOfTimes) as occurrencies
         ORDER BY occurrencies desc
-        LIMIT 1000
-        MATCH (item)-[:BELONGS_TO_CATEGORY]->(category:Category)
+        LIMIT 5000
         RETURN item.oms_sku as productId, item.embeddingNode2vecT2 as embedding, category.name as categoryName
     """
 
