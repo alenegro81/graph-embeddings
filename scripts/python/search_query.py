@@ -33,12 +33,21 @@ with driver.session(database="test-embeddings-2") as session:
         RETURN url, query as queryText, embedding
         Limit 5000
     """
-    query = """
+    query_old_1 = """
         MATCH (query:SearchTerm)-[:WAS_USED_IN]->(:SessionEntry)
         WITH query, count(*) as occurrencies
         ORDER BY occurrencies desc
         LIMIT 1000
         RETURN query.searchTerm as queryText, query.embeddingGGVecT1 as embedding, 'product' as productName 
+    """
+
+    query = """
+        MATCH (item:TargetItem_t3)-[r:UNWEIGHTED_CLICKED_AFTER_SEARCH_2|ADDED_TO_CART_AFTER_SEARCH|PURCHASED_AFTER_SEARCH]->(s:TargetSearchTerm_t3)
+        WITH item, sum(r.numberOfTimes) as occurrencies
+        ORDER BY occurrencies desc
+        LIMIT 1000
+        MATCH (item)-[:BELONGS_TO_CATEGORY]->(category:Category)
+        RETURN item.oms_sku as productId, item.embeddingNode2vecT2 as embedding, category.name as categoryName
     """
 
     result = session.run(query_old)
@@ -47,10 +56,10 @@ with driver.session(database="test-embeddings-2") as session:
 
 X_embedded = TSNE(n_components=2, random_state=6).fit_transform(list(X.embedding))
 
-queries = X.queryText
+products = X.productId
 df = pd.DataFrame(data = {
-    "query": queries,
-    "product": X.url,
+    "product": products,
+    "category": X.categoryName,
     "x": [value[0] for value in X_embedded],
     "y": [value[1] for value in X_embedded]
 })
@@ -58,8 +67,8 @@ df = pd.DataFrame(data = {
 chart = alt.Chart(df).mark_circle(size=60).encode(
     x='x',
     y='y',
-    color='product',
-    tooltip=['query', 'product']
+    color='category',
+    tooltip=['product', 'category']
 ).properties(width=700, height=400)
 
 chart.save("test_python_1.html")
