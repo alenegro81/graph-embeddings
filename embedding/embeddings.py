@@ -36,7 +36,7 @@ class GraphEmbeddings(object):
             user_info_thread.daemon = True
             user_info_thread.start()
 
-        for i in range(embeddings.shape[0] - 1):
+        for i in range(embeddings.shape[0]):
             self._nodes_queue.put((names[i], embeddings[i]))
             if i % 1000 == 0:
                 print(i, "lines processed")
@@ -55,7 +55,7 @@ class GraphEmbeddings(object):
         while True:
             node_id, embeddings = self._nodes_queue.get()
             queue_size = self._nodes_queue.qsize()
-            if queue_size % 100 == 0:
+            if queue_size % 1000 == 0:
                 with self._print_lock:
                     print("Queue size:", queue_size)
             with self._driver.session(database=self._database_name) as session:

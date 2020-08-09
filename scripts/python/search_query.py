@@ -75,6 +75,6 @@ chart = alt.Chart(df).mark_circle(size=60).encode(
 ).properties(width=700, height=400)
 
 chart.save("test_python_1.html")
-altair_viewer.show(chart)
+#altair_viewer.show(chart)
 
 #print("Just wait")

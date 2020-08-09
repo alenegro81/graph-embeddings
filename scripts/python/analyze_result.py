@@ -50,19 +50,23 @@ class AnalyzeResult(object):
 
                 except Exception as e:
                     print(e, row)
-        print("Average Overlap:", np.average(np.array(overlap_statistics)))
+        print("Average Overlap:", np.average(np.array(overlap_statistics)), "over", overlap_statistics_p.__len__())
         print("Average Overlap in percentage:", np.average(np.array(overlap_statistics_p)))
 
 def CustomParser(data):
     import json
-    j1 = json.loads(data)
+    try:
+        j1 = json.loads(data)
+    except Exception as e:
+        print(e, data)
+        j1 = []
     return j1
 
 if __name__ == '__main__':
     start = time.time()
     uri = "bolt://localhost:7687"
     analyzer = AnalyzeResult(uri=uri, user="neo4j", password="pippo1", database_name="test-embeddings-2")
-    analyzer.analyze("analysis_monthly_t1_10_10000.txt")
+    analyzer.analyze("analysis_monthly_random_t12_purchasedonly_10_10000.txt")
     end = time.time() - start
     print("Time to complete:", end)
 
