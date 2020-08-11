@@ -91,7 +91,7 @@ class GraphHelper(object):
                   embeddingSize: 512,
                   maxIterations: 4,
                   iterationWeights: [0.9,0.9,1.0,2.0],
-                  writeProperty: {},
+                  writeProperty: '{}',
                   normalizationStrength: {}},
                   concurrency: 76,
                   readConcurrency: 76,
@@ -116,7 +116,7 @@ class HyperParametersOptimization(object):
     def optimize(self):
         GRAPH_HELPER.create_graph_in_memory()
         print("Graph in memory created")
-        TARGET_RESULTS = GRAPH_HELPER.get_target();
+        #TARGET_RESULTS = GRAPH_HELPER.get_target();
         print("Target computed:", TARGET_RESULTS.__len__())
         study = optuna.create_study()
         print("Study started")
