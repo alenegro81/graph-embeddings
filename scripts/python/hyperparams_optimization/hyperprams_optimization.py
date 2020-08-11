@@ -88,7 +88,7 @@ class GraphHelper(object):
         query = """
 CALL gds.alpha.randomProjection.write(
 "embeddingGraph", 
-{
+{{
 embeddingSize: 512,
 maxIterations: 4,
 iterationWeights: [0.9,0.9,1.0,2.0],
@@ -96,7 +96,7 @@ writeProperty: '{}',
 normalizationStrength: {},
 concurrency: 76,
 writeConcurrency: 76
-})""".format(writeProperty, normalizationStrength)
+}})""".format(writeProperty, normalizationStrength)
 
         with self._driver.session(database=self._database_name) as session:
             session.run(query)
