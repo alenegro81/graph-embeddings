@@ -125,19 +125,27 @@ class HyperParametersOptimization(object):
 
     def optimize(self):
         GRAPH_HELPER.create_graph_in_memory()
+        print("Graph in memory created")
         TARGET_RESULTS = GRAPH_HELPER.get_target();
+        print("Target computed:", TARGET_RESULTS.__len__())
         study = optuna.create_study()
+        print("Study started")
         study.optimize(objective, n_trials=10)
         print(study.best_params)
 
 
 def objective(trial):
+    print("Start objective")
     normalization_strength = trial.suggest_uniform('beta', -1.0, 0)
+    print("Current normalization_strength:", normalization_strength)
     write_property = "optimizationTest"
+    print("Staring computing embeddings!")
     GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
+    print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
+    print("Compting error")
     error = compute_error(results, TARGET_RESULTS)
-    print("Current error:", error)
+    print("Current error:", error, "with normalization_strength:", normalization_strength)
     return error
 
 
@@ -174,7 +182,7 @@ if __name__ == '__main__':
     uri = "bolt://localhost:7687"
     if len(sys.argv) > 1:
         uri = sys.argv[1]
-    graph_helper = GraphHelper(uri=uri, user="neo4j", password="pippo1", database_name="test-embeddings-2")
+    graph_helper = GraphHelper(uri=uri, user="neo4j", password="alessandro", database_name="neo4j")
     GRAPH_HELPER = graph_helper
     optimize = HyperParametersOptimization()
     optimize.optimize()
