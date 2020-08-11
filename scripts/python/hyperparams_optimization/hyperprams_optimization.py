@@ -147,9 +147,11 @@ def compute_error(sim_results, target_results):
     print("Results length", target_results.__len__())
     sim_results_reshaped = {element['search_term']: element['prod_sim'] for element in sim_results}
     print("Results length", sim_results_reshaped.__len__())
+
     for item in target_results:
-        search_term = item.search_term
-        prod_clicks = item.prod_clicks
+        print(item)
+        search_term = item['search_term']
+        prod_clicks = item['prod_clicks']
         prod_sims = sim_results_reshaped[search_term]
         i = 0
         results = []
