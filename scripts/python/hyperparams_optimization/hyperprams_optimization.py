@@ -73,7 +73,7 @@ class GraphHelper(object):
                 MATCH (query)<-[r:HAS_RESULT]-(item:Item)
                 WITH query.searchTerm as searchTerm, item.oms_sku as productId, gds.alpha.similarity.cosine(query.{}, item.{}) as sim
                 ORDER BY sim desc
-                WITH searchTerm, {productId: productId, sim: sim} as prodSim
+                WITH searchTerm, {{productId: productId, sim: sim}} as prodSim
                 RETURN searchTerm, collect(prodSim)[0..10] as prodSim
             """.format(writeProperty, writeProperty)
             results = [];
