@@ -86,7 +86,6 @@ class GraphHelper(object):
 
     def compute_emeddings(self, writeProperty, normalizationStrength):
         query = """
-            CALL apoc.periodic.submit('embeddingRandomProjectionT12', '
                 CALL gds.alpha.randomProjection.write({
                   'embeddingGraph',
                   embeddingSize: 512,
@@ -97,7 +96,7 @@ class GraphHelper(object):
                   concurrency: 76,
                   readConcurrency: 76,
                   writeConcurrency: 76
-                })')
+                })
         """.format(writeProperty, normalizationStrength)
 
         with self._driver.session(database=self._database_name) as session:
