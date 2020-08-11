@@ -125,6 +125,7 @@ class HyperParametersOptimization(object):
 
 
 def objective(trial):
+    print("Target computed:", TARGET_RESULTS.__len__())
     print("Start objective")
     normalization_strength = trial.suggest_uniform('beta', -1.0, 0)
     print("Current normalization_strength:", normalization_strength)
@@ -134,12 +135,14 @@ def objective(trial):
     print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
     print("CompUting error")
+
     error = compute_error(results, TARGET_RESULTS)
     print("Current error:", error, "with normalization_strength:", normalization_strength)
     return error
 
 
 def compute_error(sim_results, target_results):
+    print("Target computed:", TARGET_RESULTS.__len__())
     overlap_statistics = []
     overlap_statistics_p = []
     print("Results length", sim_results.__len__())
