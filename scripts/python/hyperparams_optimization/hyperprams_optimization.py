@@ -116,8 +116,6 @@ class HyperParametersOptimization(object):
     def optimize(self):
         GRAPH_HELPER.create_graph_in_memory()
         print("Graph in memory created")
-        TARGET_RESULTS = GRAPH_HELPER.get_target();
-        print("Target computed:", TARGET_RESULTS.__len__())
         study = optuna.create_study()
         print("Study started")
         study.optimize(objective, n_trials=10)
@@ -180,6 +178,8 @@ if __name__ == '__main__':
         uri = sys.argv[1]
     graph_helper = GraphHelper(uri=uri, user="neo4j", password="alessandro", database_name="neo4j")
     GRAPH_HELPER = graph_helper
+    TARGET_RESULTS = GRAPH_HELPER.get_target();
+    print("Target computed:", TARGET_RESULTS.__len__())
     optimize = HyperParametersOptimization()
     optimize.optimize()
     end = time.time() - start
