@@ -133,19 +133,21 @@ def objective(trial):
     GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
     print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
-    print("Compting error")
+    print("CompUting error")
     error = compute_error(results, TARGET_RESULTS)
     print("Current error:", error, "with normalization_strength:", normalization_strength)
     return error
 
 
-def compute_error(results, target_results):
+def compute_error(sim_results, target_results):
     overlap_statistics = []
     overlap_statistics_p = []
+    print("Results length", sim_results.__len__())
+    print("Results length", target_results.__len__())
     for item in target_results:
-        search_term = item.searchTerm
-        prod_clicks = item.prodClicks
-        prod_sims = results[search_term].prod_sims
+        search_term = item.search_term
+        prod_clicks = item.prod_clicks
+        prod_sims = sim_results[search_term].prod_sims
         i = 0
         results = []
         for prod in prod_clicks:
@@ -162,10 +164,11 @@ def compute_error(results, target_results):
         if prod_clicks.__len__() == 10:
             overlap_statistics_p.append(results.__len__() / prod_clicks.__len__())
         print("ST:", results.__len__(), prod_clicks.__len__(), search_term, results)
-        print("Average Overlap:", np.average(np.array(overlap_statistics)), "over", overlap_statistics_p.__len__())
-        average_accuracy = np.average(np.array(overlap_statistics_p))
-        print("Average Overlap in percentage:", average_accuracy)
-        return 1 - average_accuracy
+
+    print("Average Overlap:", np.average(np.array(overlap_statistics)), "over", overlap_statistics_p.__len__())
+    average_accuracy = np.average(np.array(overlap_statistics_p))
+    print("Average Overlap in percentage:", average_accuracy)
+    return 1 - average_accuracy
 
 if __name__ == '__main__':
     start = time.time()
