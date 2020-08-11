@@ -123,13 +123,12 @@ class HyperParametersOptimization(object):
 
 
 def objective(trial):
-    print("Target computed:", TARGET_RESULTS.__len__())
     print("Start objective")
     normalization_strength = trial.suggest_uniform('beta', -1.0, 0)
     print("Current normalization_strength:", normalization_strength)
     write_property = "optimizationTest"
     print("Staring computing embeddings!")
-    #GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
+    GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
     print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
     print("CompUting error")
@@ -140,16 +139,11 @@ def objective(trial):
 
 
 def compute_error(sim_results, target_results):
-    print("Target computed:", TARGET_RESULTS.__len__())
     overlap_statistics = []
     overlap_statistics_p = []
-    print("Results length", sim_results.__len__())
-    print("Results length", target_results.__len__())
     sim_results_reshaped = {element['search_term']: element['prod_sim'] for element in sim_results}
-    print("Results length", sim_results_reshaped.__len__())
 
     for item in target_results:
-        print(item)
         search_term = item['search_term']
         prod_clicks = item['prod_clicks']
         prod_sims = sim_results_reshaped[search_term]
@@ -168,7 +162,7 @@ def compute_error(sim_results, target_results):
         overlap_statistics.append(results.__len__())
         if prod_clicks.__len__() == 10:
             overlap_statistics_p.append(results.__len__() / prod_clicks.__len__())
-        print("ST:", results.__len__(), prod_clicks.__len__(), search_term, results)
+        #print("ST:", results.__len__(), prod_clicks.__len__(), search_term, results)
 
     print("Average Overlap:", np.average(np.array(overlap_statistics)), "over", overlap_statistics_p.__len__())
     average_accuracy = np.average(np.array(overlap_statistics_p))
