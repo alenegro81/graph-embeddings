@@ -105,7 +105,7 @@ class GraphHelper(object):
                   normalizationStrength: {}},
                   concurrency: 76,
                   readConcurrency: 76,
-                  writeConcurrency: 1
+                  writeConcurrency: 76
                 })')
         """.format(writeProperty, normalizationStrength)
 
@@ -127,7 +127,7 @@ class HyperParametersOptimization(object):
         GRAPH_HELPER.create_graph_in_memory()
         TARGET_RESULTS = GRAPH_HELPER.get_target();
         study = optuna.create_study()
-        study.optimize(objective, n_trials=100)
+        study.optimize(objective, n_trials=10)
         print(study.best_params)
 
 
