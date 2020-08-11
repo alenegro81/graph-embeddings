@@ -86,18 +86,19 @@ class GraphHelper(object):
 
     def compute_emeddings(self, writeProperty, normalizationStrength):
         query = """
-CALL gds.alpha.randomProjection.write(
-"embeddingGraph", 
-{{
-embeddingSize: 512,
-maxIterations: 4,
-iterationWeights: [0.9,0.9,1.0,2.0],
-writeProperty: '{}',
-normalizationStrength: {},
-concurrency: 76,
-writeConcurrency: 76
-}})""".format(writeProperty, normalizationStrength)
-
+            CALL gds.alpha.randomProjection.write(
+            "embeddingGraph", 
+            {{
+            embeddingSize: 512,
+            maxIterations: 4,
+            iterationWeights: [0.9,0.9,1.0,2.0],
+            writeProperty: '{}',
+            normalizationStrength: {},
+            concurrency: 76,
+            writeConcurrency: 76
+            }})
+        """.format(writeProperty, normalizationStrength)
+        print("Query check:", query)
         with self._driver.session(database=self._database_name) as session:
             session.run(query)
 
@@ -115,7 +116,7 @@ class HyperParametersOptimization(object):
     def optimize(self):
         GRAPH_HELPER.create_graph_in_memory()
         print("Graph in memory created")
-        #TARGET_RESULTS = GRAPH_HELPER.get_target();
+        TARGET_RESULTS = GRAPH_HELPER.get_target();
         print("Target computed:", TARGET_RESULTS.__len__())
         study = optuna.create_study()
         print("Study started")
