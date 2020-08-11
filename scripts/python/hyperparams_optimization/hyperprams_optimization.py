@@ -129,7 +129,7 @@ def objective(trial):
     print("Current normalization_strength:", normalization_strength)
     write_property = "optimizationTest"
     print("Staring computing embeddings!")
-    GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
+    #GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
     print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
     print("CompUting error")
@@ -145,7 +145,7 @@ def compute_error(sim_results, target_results):
     overlap_statistics_p = []
     print("Results length", sim_results.__len__())
     print("Results length", target_results.__len__())
-    sim_results_reshaped = {item['search_term']: item['prod_sim'] for item in sim_results}
+    sim_results_reshaped = {element['search_term']: element['prod_sim'] for element in sim_results}
     print("Results length", sim_results_reshaped.__len__())
     for item in target_results:
         search_term = item.search_term
