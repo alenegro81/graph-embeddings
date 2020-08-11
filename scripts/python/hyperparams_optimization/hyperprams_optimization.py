@@ -84,20 +84,20 @@ class GraphHelper(object):
                     results.append({"search_term": search_term, "prod_sim": prod_sim})
             return results
 
-    def compute_emeddings(self, writeProperty, normalizationStrength):
+    def compute_emeddings(self, writeProperty, normalizationStrength, first_second_value, forth_value):
         query = """
             CALL gds.alpha.randomProjection.write(
             "embeddingGraph", 
             {{
             embeddingSize: 512,
             maxIterations: 4,
-            iterationWeights: [0.9,0.9,1.0,2.0],
+            iterationWeights: [{},{},1.0,{}],
             writeProperty: '{}',
             normalizationStrength: {},
             concurrency: 76,
             writeConcurrency: 76
             }})
-        """.format(writeProperty, normalizationStrength)
+        """.format(first_second_value, first_second_value, forth_value, writeProperty, normalizationStrength)
         print("Query check:", query)
         with self._driver.session(database=self._database_name) as session:
             session.run(query)
@@ -111,24 +111,25 @@ def executeNoException(session, query):
     except:
         pass
 
-class HyperParametersOptimization(object):
 
-    def optimize(self):
-        GRAPH_HELPER.create_graph_in_memory()
-        print("Graph in memory created")
-        study = optuna.create_study()
-        print("Study started")
-        study.optimize(objective, n_trials=10)
-        print(study.best_params)
+def optimize():
+    GRAPH_HELPER.create_graph_in_memory()
+    print("Graph in memory created")
+    study = optuna.create_study()
+    print("Study started")
+    study.optimize(objective, n_trials=100)
+    print(study.best_params)
 
 
 def objective(trial):
     print("Start objective")
-    normalization_strength = trial.suggest_uniform('beta', -1.0, 0)
+    normalization_strength = trial.suggest_uniform('beta', -1.5, 0.5)
+    forth_value = trial.suggest_uniform('forth_value', 0.001, 8.0)
+    first_second_value = trial.suggest_uniform('first_second_value', 0.0, 1.0)
     print("Current normalization_strength:", normalization_strength)
     write_property = "optimizationTest"
     print("Staring computing embeddings!")
-    GRAPH_HELPER.compute_emeddings(write_property, normalization_strength);
+    GRAPH_HELPER.compute_emeddings(write_property, normalization_strength, first_second_value, forth_value);
     print("Starting similarity")
     results = GRAPH_HELPER.get_similarity(write_property);
     print("CompUting error")
@@ -178,8 +179,7 @@ if __name__ == '__main__':
     GRAPH_HELPER = graph_helper
     TARGET_RESULTS = GRAPH_HELPER.get_target();
     print("Target computed:", TARGET_RESULTS.__len__())
-    optimize = HyperParametersOptimization()
-    optimize.optimize()
+    optimize()
     end = time.time() - start
     graph_helper.close()
     print("Time to complete:", end)
