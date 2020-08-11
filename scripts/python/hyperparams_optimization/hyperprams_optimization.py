@@ -27,16 +27,17 @@ class GraphHelper(object):
             create_query = """
                 call gds.graph.create(
                     'embeddingGraph',
-                    ['ClickedURL', 'SearchEvent', 'SearchQuery'],
+                    ['SearchTerm', 'Item'],
                       {
-                        related_to_url: {
-                          type: 'RELATED_TO_URL',
-                          orientation: 'UNDIRECTED'
-                        },
-                        has_next: {
-                          type: 'HAS_NEXT',
-                          orientation: 'UNDIRECTED'    }
-                      });
+                    UNWEIGHTED_PURCHASED_AFTER_SEARCH_MULTIPLIED: {
+                      type: "UNWEIGHTED_PURCHASED_AFTER_SEARCH_MULTIPLIED",
+                      orientation: "UNDIRECTED"
+                    },
+                    UNWEIGHTED_ADDED_TO_CART_AFTER_SEARCH_MULTIPLIED: {
+                      type: "UNWEIGHTED_ADDED_TO_CART_AFTER_SEARCH_MULTIPLIED",
+                      orientation: "UNDIRECTED"
+                    }
+                  });
             """
 
             result = session.run(create_query)
@@ -87,17 +88,7 @@ class GraphHelper(object):
         query = """
             CALL apoc.periodic.submit('embeddingRandomProjectionT12', '
                 CALL gds.alpha.randomProjection.write({
-                  nodeProjection: ["SearchTerm", "Item"],
-                  relationshipProjection: {
-                    UNWEIGHTED_PURCHASED_AFTER_SEARCH_MULTIPLIED: {
-                      type: "UNWEIGHTED_PURCHASED_AFTER_SEARCH_MULTIPLIED",
-                      orientation: "UNDIRECTED"
-                    },
-                    UNWEIGHTED_ADDED_TO_CART_AFTER_SEARCH_MULTIPLIED: {
-                      type: "UNWEIGHTED_ADDED_TO_CART_AFTER_SEARCH_MULTIPLIED",
-                      orientation: "UNDIRECTED"
-                    }
-                  },
+                  'embeddingGraph',
                   embeddingSize: 512,
                   maxIterations: 4,
                   iterationWeights: [0.9,0.9,1.0,2.0],
