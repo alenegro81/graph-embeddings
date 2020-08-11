@@ -86,18 +86,18 @@ class GraphHelper(object):
 
     def compute_emeddings(self, writeProperty, normalizationStrength):
         query = """
-                CALL gds.alpha.randomProjection.write(
-                  'embeddingGraph', {
-                  embeddingSize: 512,
-                  maxIterations: 4,
-                  iterationWeights: [0.9,0.9,1.0,2.0],
-                  writeProperty: '{}',
-                  normalizationStrength: {},
-                  concurrency: 76,
-                  readConcurrency: 76,
-                  writeConcurrency: 76
-                })
-        """.format(writeProperty, normalizationStrength)
+CALL gds.alpha.randomProjection.write(
+"embeddingGraph", 
+{
+embeddingSize: 512,
+maxIterations: 4,
+iterationWeights: [0.9,0.9,1.0,2.0],
+writeProperty: 'test1',
+normalizationStrength: -0.85,
+concurrency: 76,
+writeConcurrency: 76
+})"""
+     #       .format(writeProperty, normalizationStrength)
 
         with self._driver.session(database=self._database_name) as session:
             session.run(query)
