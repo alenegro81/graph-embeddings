@@ -66,7 +66,7 @@ if __name__ == '__main__':
     start = time.time()
     uri = "bolt://localhost:7687"
     analyzer = AnalyzeResult(uri=uri, user="neo4j", password="pippo1", database_name="test-embeddings-2")
-    analyzer.analyze("analysis/analysis_monthly_random_t13_purchasedonly_10_10000.txt")
+    analyzer.analyze("analysis/analysis_yearly_random_t15_purchasedonly_10_10000.txt")
     end = time.time() - start
     print("Time to complete:", end)
 
